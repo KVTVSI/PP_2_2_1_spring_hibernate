@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserServiceImp implements UserService {
 
    @Autowired
@@ -21,8 +22,8 @@ public class UserServiceImp implements UserService {
    }
 
    @Override
-   public User getUserFromCarModelAndSeries(String model, int series) {
-      return userDao.getUserFromCarModelAndSeries(model,series);
+   public User getUserByCarModelAndSeries(String model, int series) {
+      return userDao.getUserByCarModelAndSeries(model,series);
    }
 
    @Transactional(readOnly = true)

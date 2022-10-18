@@ -5,36 +5,37 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
-@Transactional
+
 public class UserDaoImp implements UserDao {
 
-   @Autowired
-   private SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-   @Override
-   public void add(User user) {
-      sessionFactory.getCurrentSession().save(user);
-   }
+    @Autowired
+    private UserDaoImp(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
-   @Override
-   public User getUserFromCarModelAndSeries(String model, int series) {
-      return (User) sessionFactory.getCurrentSession()
-              .createQuery("FROM User u where car.model = :model and car.series = :series")
-              .setParameter("model", model)
-              .setParameter("series", series)
-              .getSingleResult();
-   }
+    @Override
+    public void add(User user) {
+        sessionFactory.getCurrentSession().save(user);
+    }
 
-   @Override
-   @SuppressWarnings("unchecked")
-   public List<User> listUsers() {
-      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
-      return query.getResultList();
-   }
+    @Override
+    public User getUserByCarModelAndSeries(String model, int series) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("FROM User where car.model = :model and car.series = :series", User.class)
+                .setParameter("model", model)
+                .setParameter("series", series)
+                .getSingleResult();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<User> listUsers() {
+        return sessionFactory.getCurrentSession().createQuery("from User").getResultList();
+    }
 
 }
