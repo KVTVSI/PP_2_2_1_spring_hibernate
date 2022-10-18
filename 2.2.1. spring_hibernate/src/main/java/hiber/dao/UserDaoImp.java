@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
+@Transactional
 public class UserDaoImp implements UserDao {
 
    @Autowired
@@ -17,6 +19,15 @@ public class UserDaoImp implements UserDao {
    @Override
    public void add(User user) {
       sessionFactory.getCurrentSession().save(user);
+   }
+
+   @Override
+   public User getUserFromCarModelAndSeries(String model, int series) {
+      return (User) sessionFactory.getCurrentSession()
+              .createQuery("FROM User u where car.model = :model and car.series = :series")
+              .setParameter("model", model)
+              .setParameter("series", series)
+              .getSingleResult();
    }
 
    @Override
